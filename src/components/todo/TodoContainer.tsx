@@ -1,10 +1,18 @@
-import { useAppSelector } from "@/redux/hook";
+// import { useAppSelector } from "@/redux/hook";
 import AddTodoModal from "./AddTodoModal";
 import TodoCard from "./TodoCard";
 import TodoFilter from "./TodoFilter";
+import { useGetTodosQuery } from "@/redux/api/api";
 
 const TodoContainer = () => {
-  const { todos } = useAppSelector((state) => state.todos);
+  // showing data from local state
+  // const { todos } = useAppSelector((state) => state.todos);
+
+  //showing data from server
+  const { data: todos, isLoading } = useGetTodosQuery(undefined);
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div>
@@ -13,15 +21,16 @@ const TodoContainer = () => {
         <TodoFilter></TodoFilter>
       </div>
       <div className="bg-primary-gradient w-full h-full rounded-xl p-[5px]">
-        {todos.length ? (
+        {todos?.data.length ? (
           <div className="bg-white w-full h-full rounded-lg p-5 space-y-3">
-            {todos.map((item) => (
+            {todos?.data.map((item) => (
               <TodoCard
-                key={item.id}
-                id={item.id}
+                key={item._id}
+                id={item._id}
                 title={item.task}
                 isCompleted={item.isCompleted}
                 description={item.description}
+                priority={item.priority}
               ></TodoCard>
             ))}
           </div>

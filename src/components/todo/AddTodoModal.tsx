@@ -12,20 +12,43 @@ import {
 } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { useAppDispatch } from "@/redux/hook";
-import { addTodo } from "@/redux/features/todoSlice";
+import { useAddTodosMutation } from "@/redux/api/api";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+// import { useAppDispatch } from "@/redux/hook";
+// import { addTodo } from "@/redux/features/todoSlice";
 
 const AddTodoModal = () => {
   const [task, setTask] = useState("");
   const [description, setDescription] = useState("");
-  const dispatch = useAppDispatch();
+  const [priority, setPriority] = useState("");
+  // const dispatch = useAppDispatch();
+
+  //for server
+  const [addTodo, { data, isError, isLoading, isSuccess }] =
+    useAddTodosMutation();
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    const randomString = Math.random().toString(36).substring(2, 7);
+    const taskDetails = {
+      task: task,
+      description: description,
+      priority: priority,
+      isCompleted: false,
+    };
 
-    dispatch(addTodo({ id: randomString, task, description }));
+    // const randomString = Math.random().toString(36).substring(2, 7);
+
+    // dispatch(addTodo({ id: randomString, task, description }));
+    addTodo(taskDetails);
   };
 
   return (
@@ -61,6 +84,22 @@ const AddTodoModal = () => {
                 onBlur={(e) => setDescription(e.target.value)}
                 className="col-span-3"
               />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-right">Priority</Label>
+              <Select onValueChange={(value) => setPriority(value)}>
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select Priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Priority</SelectLabel>
+                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="low">Low</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>
