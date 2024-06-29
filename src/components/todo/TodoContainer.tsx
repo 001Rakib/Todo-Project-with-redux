@@ -1,4 +1,5 @@
 // import { useAppSelector } from "@/redux/hook";
+import { useState } from "react";
 import AddTodoModal from "./AddTodoModal";
 import TodoCard from "./TodoCard";
 import TodoFilter from "./TodoFilter";
@@ -8,8 +9,9 @@ const TodoContainer = () => {
   // showing data from local state
   // const { todos } = useAppSelector((state) => state.todos);
 
+  const [priority, setPriority] = useState("");
   //showing data from server
-  const { data: todos, isLoading } = useGetTodosQuery(undefined);
+  const { data: todos, isLoading } = useGetTodosQuery(priority);
   if (isLoading) {
     return <p>Loading...</p>;
   }
@@ -18,7 +20,7 @@ const TodoContainer = () => {
     <div>
       <div className="flex justify-between my-2">
         <AddTodoModal></AddTodoModal>
-        <TodoFilter></TodoFilter>
+        <TodoFilter priority={priority} setPriority={setPriority}></TodoFilter>
       </div>
       <div className="bg-primary-gradient w-full h-full rounded-xl p-[5px]">
         {todos?.data.length ? (
@@ -26,7 +28,7 @@ const TodoContainer = () => {
             {todos?.data.map((item) => (
               <TodoCard
                 key={item._id}
-                id={item._id}
+                _id={item._id}
                 title={item.task}
                 isCompleted={item.isCompleted}
                 description={item.description}
